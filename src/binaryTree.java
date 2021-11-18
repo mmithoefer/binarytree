@@ -59,9 +59,9 @@ public class binaryTree {
     public String Inorder(binaryTree tree){
         String ausgabe = "";
         if (!tree.isEmpty()){
-            ausgabe = ausgabe.concat(Inorder(tree.getLeft()));
-            ausgabe = ausgabe.concat(Integer.toString(tree.getVal()));
-            ausgabe = ausgabe.concat(Inorder(tree.getRight()));
+            ausgabe += Inorder(tree.getLeft());
+            ausgabe += Integer.toString(tree.getVal());
+            ausgabe += Inorder(tree.getRight());
         }
         return ausgabe;
     }
@@ -69,9 +69,9 @@ public class binaryTree {
     public String Preorder(binaryTree tree){
         String ausgabe = "";
         if (!tree.isEmpty()){
-            ausgabe = ausgabe.concat(Integer.toString(tree.getVal()));
-            ausgabe = ausgabe.concat(Inorder(tree.getLeft()));
-            ausgabe = ausgabe.concat(Inorder(tree.getRight()));
+            ausgabe += Integer.toString(tree.getVal());
+            ausgabe += Inorder(tree.getLeft());
+            ausgabe += Inorder(tree.getRight());
         }
         return ausgabe;
     }
@@ -79,9 +79,9 @@ public class binaryTree {
     public String Postorder(binaryTree tree){
         String ausgabe = "";
         if (!tree.isEmpty()){
-            ausgabe = ausgabe.concat(Inorder(tree.getLeft()));
-            ausgabe = ausgabe.concat(Inorder(tree.getRight()));
-            ausgabe = ausgabe.concat(Integer.toString(tree.getVal()));
+            ausgabe += Inorder(tree.getLeft());
+            ausgabe += Inorder(tree.getRight());
+            ausgabe += Integer.toString(tree.getVal());
         }
         return ausgabe;
     }
