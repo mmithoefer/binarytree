@@ -1,3 +1,5 @@
+import java.util.Stack;
+
 public class binaryTree {
 
     private class Node {
@@ -90,6 +92,24 @@ public class binaryTree {
         return ausgabe;
     }
 
+    public int getNodeCount(binaryTree tree){
+        Stack<binaryTree> stack = new Stack<binaryTree>();
+        int count = 0;
+        while(!stack.isEmpty() || !tree.isEmpty()){
+            if (!tree.isEmpty()){
+                stack.push(tree);
+                tree = tree.getLeft();
+            }
+            else{
+                tree = stack.peek();
+                stack.pop();
+                count++;
+                tree = tree.getRight();
+            }
+        }
+        return count;
+    }
+
     public static void main(String[] args) {
         binaryTree a = new binaryTree(1);
         binaryTree b = new binaryTree(2);
@@ -104,6 +124,7 @@ public class binaryTree {
         System.out.println("Inorder: " + a.Inorder(a));
         System.out.println("Preorder: " + a.Preorder(a));
         System.out.println("Postorder: "+ a.Postorder(a));
+        System.out.println(a.getNodeCount(a));
     }
 }
 
