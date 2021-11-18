@@ -37,18 +37,22 @@ public class binaryTree {
     }
 
     public binaryTree getLeft(){
-        return new binaryTree(this.root.left);
+        if (isEmpty()) throw new RuntimeException("cannot get left of empty tree");
+        else return new binaryTree(this.root.left);
     }
 
     public binaryTree getRight(){
-        return new binaryTree(this.root.right);
+        if (isEmpty()) throw new RuntimeException("cannot get right of empty tree");
+        else return new binaryTree(this.root.right);
     }
 
     public void setVal(int val){
-        this.root.val = val;
+        if (isEmpty()) new binaryTree(val);
+        else this.root.val = val;
     }
 
     public int getVal(){
+        if (isEmpty()) throw new RuntimeException("cannot get val of empty tree");
         return this.root.val;
     }
 
@@ -92,6 +96,7 @@ public class binaryTree {
         binaryTree c = new binaryTree(3);
         binaryTree d = new binaryTree(4);
         binaryTree e = new binaryTree(5);
+        binaryTree f = new binaryTree();
         a.setLeft(b);
         a.setRight(c);
         b.setRight(d);
