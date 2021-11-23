@@ -1,8 +1,10 @@
+import org.jetbrains.annotations.NotNull;
+
 import java.util.Stack;
 
 public class binaryTree {
 
-    private class Node {
+    private static class Node {
         public int val;
         private Node left, right;
 
@@ -93,7 +95,7 @@ public class binaryTree {
     }
 
     public int getNodeCount(binaryTree tree){
-        Stack<binaryTree> stack = new Stack<binaryTree>();
+        Stack<binaryTree> stack = new Stack<>();
         int count = 0;
         while(!stack.isEmpty() || !tree.isEmpty()){
             if (!tree.isEmpty()){
@@ -110,13 +112,56 @@ public class binaryTree {
         return count;
     }
 
+    public int search(int val){
+        if (isEmpty()) return -1;
+        if (val < getVal()){
+            return getLeft().search(val);
+        }
+        if (val > getVal()){
+            return getRight().search(val);
+        }
+        else
+            return getVal();
+    }
+
+    public void insertTree(@NotNull binaryTree tree){
+        if (!tree.isEmpty() && !isEmpty()) {
+            if (tree.getVal() < getVal()) {
+                if (getLeft().isEmpty()) {
+                    setLeft(tree);
+                    return;
+                } else {
+                    getLeft().insertTree(tree);
+                }
+            } else if (tree.getVal() > getVal()) {
+                if (getRight().isEmpty()) {
+                    setRight(tree);
+                    return;
+                } else {
+                    getRight().insertTree(tree);
+                }
+            } else {
+                throw new RuntimeException("cannot insert element twice");
+            }
+        }
+        else{
+            root = tree.root;
+        }
+    }
+
+    public void insertVal(int val){
+        insertTree(new binaryTree(val));
+    }
+
     public static void main(String[] args) {
-        binaryTree a = new binaryTree(1);
+
+        binaryTree a = new binaryTree();
         binaryTree b = new binaryTree(2);
         binaryTree c = new binaryTree(3);
-        binaryTree d = new binaryTree(4);
+        binaryTree d = new binaryTree(1);
         binaryTree e = new binaryTree(5);
-        binaryTree f = new binaryTree();
+        binaryTree f = new binaryTree(6);
+        /*
         a.setLeft(b);
         a.setRight(c);
         b.setRight(d);
@@ -125,6 +170,18 @@ public class binaryTree {
         System.out.println("Preorder: " + a.Preorder(a));
         System.out.println("Postorder: "+ a.Postorder(a));
         System.out.println(a.getNodeCount(a));
+
+         */
+        a.insertTree(b);
+        a.insertTree(c);
+        a.insertTree(d);
+        a.insertTree(e);
+        a.insertTree(f);
+        a.insertVal(7);
+        System.out.println("Inorder: " + a.Inorder(a));
+        System.out.println(a.search(30));
+        System.out.println(a.search(3));
     }
+
 }
 
