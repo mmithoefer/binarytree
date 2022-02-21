@@ -1,10 +1,6 @@
-import org.jetbrains.annotations.NotNull;
-
-import java.util.Stack;
-
 public class binaryTree {
 
-    private static class Node {
+    private class Node {
         public int val;
         private Node left, right;
 
@@ -28,12 +24,12 @@ public class binaryTree {
     }
 
     public void setLeft(binaryTree treeLeft) {
-        if (treeLeft.isEmpty() || isEmpty()) throw new RuntimeException();
+        if (treeLeft.isEmpty()) throw new RuntimeException("Cannot insert empty tree");
         this.root.left = treeLeft.root;
     }
 
     public void setRight(binaryTree treeRight) {
-        if (treeRight.isEmpty() || isEmpty()) throw new RuntimeException();
+        if (treeRight.isEmpty() || isEmpty()) throw new RuntimeException("Cannot insert empty tree");
         this.root.right = treeRight.root;
     }
 
@@ -52,13 +48,20 @@ public class binaryTree {
     }
 
     public void setVal(int val) {
-        if (isEmpty()) new binaryTree(val);
+        if (isEmpty()) root = new Node(val);
         else this.root.val = val;
     }
 
     public int getVal() {
         if (isEmpty()) throw new RuntimeException("cannot get val of empty tree");
         return this.root.val;
+    }
+
+    public binaryTree getMax() {
+        if (!isEmpty()) {
+            if (!getRight().isEmpty()) return getRight().getMax();
+            else return this;
+        } else throw new RuntimeException("cannot get max of empty tree");
     }
 
     public boolean isLeaf() {
@@ -69,7 +72,7 @@ public class binaryTree {
         String ausgabe = "";
         if (!tree.isEmpty()) {
             ausgabe += Inorder(tree.getLeft());
-            ausgabe += Integer.toString(tree.getVal());
+            ausgabe += " | " + Integer.toString(tree.getVal());
             ausgabe += Inorder(tree.getRight());
         }
         return ausgabe;
@@ -78,9 +81,9 @@ public class binaryTree {
     public String Preorder(binaryTree tree) {
         String ausgabe = "";
         if (!tree.isEmpty()) {
-            ausgabe += Integer.toString(tree.getVal());
-            ausgabe += Inorder(tree.getLeft());
-            ausgabe += Inorder(tree.getRight());
+            ausgabe += " | " + Integer.toString(tree.getVal());
+            ausgabe += Preorder(tree.getLeft());
+            ausgabe += Preorder(tree.getRight());
         }
         return ausgabe;
     }
@@ -88,99 +91,98 @@ public class binaryTree {
     public String Postorder(binaryTree tree) {
         String ausgabe = "";
         if (!tree.isEmpty()) {
-            ausgabe += Inorder(tree.getLeft());
-            ausgabe += Inorder(tree.getRight());
-            ausgabe += Integer.toString(tree.getVal());
+            ausgabe += Postorder(tree.getLeft());
+            ausgabe += Postorder(tree.getRight());
+            ausgabe += " | " + Integer.toString(tree.getVal());
         }
         return ausgabe;
     }
 
-    public int getNodeCount(binaryTree tree) {
-        Stack<binaryTree> stack = new Stack<>();
-        int count = 0;
-        while (!stack.isEmpty() || !tree.isEmpty()) {
-            if (!tree.isEmpty()) {
-                stack.push(tree);
-                tree = tree.getLeft();
-            } else {
-                tree = stack.peek();
-                stack.pop();
-                count++;
-                tree = tree.getRight();
-            }
+    public boolean search(int val) {
+        if (isEmpty()) {
+            return false;
         }
-        return count;
-    }
-
-    public int search(int val) {
-        if (isEmpty()) return -1;
-        if (val < getVal()) {
+        else if (val < getVal()) {
             return getLeft().search(val);
         }
-        if (val > getVal()) {
+        else if (val > getVal()) {
             return getRight().search(val);
-        } else
-            return getVal();
-    }
+        }
+        else return true;
+        }
 
-    public void insertTree(@NotNull binaryTree tree) {
-        if (!tree.isEmpty() && !isEmpty()) {
-            if (tree.getVal() < getVal()) {
+    public void insert(int val) {
+        if (!isEmpty()) {
+            if (val < getVal()) {
                 if (getLeft().isEmpty()) {
-                    setLeft(tree);
-                    return;
-                } else {
-                    getLeft().insertTree(tree);
+                    binaryTree a = new binaryTree(val);
+                    setLeft(a);
                 }
-            } else if (tree.getVal() > getVal()) {
-                if (getRight().isEmpty()) {
-                    setRight(tree);
-                    return;
-                } else {
-                    getRight().insertTree(tree);
-                }
-            } else {
-                throw new RuntimeException("cannot insert value twice");
+                else getLeft().insert(val);
             }
-        } else {
-            root = tree.root;
+            else {
+                if (val > getVal()) {
+                    if (getRight().isEmpty()) {
+                        binaryTree a = new binaryTree(val);
+                        setRight(a);
+                    }
+                    else getRight().insert(val);
+                }
+                else {
+                    throw new RuntimeException("cannot insert value twice");
+                }
+            }
+        }
+        else {
+            setVal(val);
         }
     }
 
-    public void insertVal(int val) {
-        insertTree(new binaryTree(val));
+
+    //recursive delete function
+    public Node remove(Node root, int key)  {
+        //tree is empty
+        if (root == null)  return null;
+
+        //traverse the tree
+        if (key < root.val)     //traverse left subtree
+            root.left = remove(root.left, key);
+        else if (key > root.val)  //traverse right subtree
+            root.right = remove(root.right, key);
+        else  {
+            // node contains only one or zero children
+            if (root.left == null)
+                return root.right;
+            else if (root.right == null)
+                return root.left;
+
+            // node has two children;
+            //get inorder successor (min value in the right subtree)
+            root.val = getLeft().getMax().getVal();
+
+            // Delete the inorder successor
+            root.right = remove(root.right, root.val);
+        }
+        return root;
     }
 
-    public static void main(String[] args) {
+    public static void main (String[]args){
+        binaryTree x = new binaryTree();
 
-        binaryTree a = new binaryTree();
-        binaryTree b = new binaryTree(2);
-        binaryTree c = new binaryTree(3);
-        binaryTree d = new binaryTree(1);
-        binaryTree e = new binaryTree(5);
-        binaryTree f = new binaryTree(6);
-        /*
-        a.setLeft(b);
-        a.setRight(c);
-        b.setRight(d);
-        b.setLeft(e);
-        System.out.println("Inorder: " + a.Inorder(a));
-        System.out.println("Preorder: " + a.Preorder(a));
-        System.out.println("Postorder: "+ a.Postorder(a));
-        System.out.println(a.getNodeCount(a));
+        int[] values = new int[]{3,2,5,1,4};
 
-         */
-        a.insertTree(b);
-        a.insertTree(c);
-        a.insertTree(d);
-        a.insertTree(e);
-        a.insertTree(f);
-        a.insertVal(7);
-        System.out.println("Inorder: " + a.Inorder(a));
-        System.out.println(a.search(30));
-        System.out.println(a.search(3));
-        System.out.println(a.getNodeCount(a));
+        for(int i = 0; i < values.length; i++){
+            x.insert(values[i]);
+        }
+
+        System.out.println("Inorder: " + x.Inorder(x));
+        System.out.println("Preorder: " + x.Preorder(x));
+        System.out.println("Postorder: " + x.Postorder(x));
+        System.out.println("Searching for 46: " + x.search(46));
+        System.out.println("Deleting 1");
+        x.remove(x.root, 1);
+        System.out.println("Searching for 1" + x.search(1));
+        System.out.println("Inorder: " + x.Inorder(x));
     }
-
 }
 
